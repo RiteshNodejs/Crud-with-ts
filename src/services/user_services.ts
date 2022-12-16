@@ -1,11 +1,17 @@
 import user from "../models/user";
-import Helper from "../utils/helpers/index";
-import jwt from "jsonwebtoken";
+import Helper from '../utils/helpers/index';
+import MESSAGES from '../utils/helpers/message_helper'
+import organization from '../models/organization'
+import  jwt  from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import organization from "../models/organization";
-import MESSAGES from "../utils/helpers/message_helper";
+import Iuser from "src/interfaces/iuser";
+import Iorganization from "src/interfaces/iorganization";
+import Ireq from '../interfaces/req_interface/iuser/Iregister';
+import Ilogin from '../interfaces/req_interface/iuser/ilogin';
+import Iprofile from '../interfaces/req_interface/iuser/iprofile';
+import Iupdateuser from '../interfaces/req_interface/iuser/iupdateuser';
 class UserServices {
-    async addUser(req, res) {
+    async addUser(req:Ireq, res) {
         try {
             //check userName is existed 
             const extUser = await user.findOne({ userName: req.body.userName });
@@ -15,7 +21,7 @@ class UserServices {
                 };
                 return Helper.error(res, resPayload)
             }
-            let myUser = new user(req.body);
+            let myUser:Iuser = new user(req.body);
             if (req.body.organization) {
                 let org = {
                     orgName: req.body.organization.orgName,
@@ -23,7 +29,7 @@ class UserServices {
                     userId: myUser._id,
                     isActive: true
                 };
-                let myorganization = new organization(org);
+                let myorganization:Iorganization = new organization(org);
                 await myorganization.save();
             }
 
@@ -55,8 +61,8 @@ class UserServices {
             };
             return Helper.error(res, resPayload, 500);
         }
-    }
-    async login(req, res) {
+    };
+    async login(req:Ilogin, res) {
         {
             //check user is a valid user or not
             const extUser = await user.findOne({ userName: req.body.userName });
@@ -88,11 +94,11 @@ class UserServices {
             };
             return Helper.success(res, resPayload);
         }
-    }
-    async getProfile(req, res) {
+    };
+    async getProfile(req:Iprofile, res) {
         try {
             const idUser = req.user._id;
-            const getUser = await user.findById(idUser);
+            const getUser = await user.findById<Iuser>(idUser);
             const findOrganization = await organization.find(
                 { userId: idUser },
                 { _id: 0, orgName: 1 }
@@ -116,11 +122,10 @@ class UserServices {
             return Helper.error(res, resPayload, 500);
         }
     }
-    async updateUser(req, res) {
+    async updateUser(req:Iupdateuser, res) {
         try {
             const idUser = req.user._id;
-
-            const extUser = await user.findOne({ userName: req.body.userName, _id: { $ne: idUser } })
+            const extUser:Iuser = await user.findOne({ userName: req.body.userName, _id: { $ne: idUser } })
                 .lean();
             //$ne selects the documents where the value of the field is not equal to the specified value. This includes documents that do not contain the field.
             //   if(extUser.id!=idUser) ->also working
@@ -134,8 +139,8 @@ class UserServices {
 /// check the update password
             if (!req.body.updatePassword) {
                 delete req.body.password;
-            }
-            console.log(req.body)
+            }        
+         
             const updatedUser = await user.findByIdAndUpdate(idUser, req.body, { new: true })
                 .then((value) => {
                     let resPayload = {
@@ -144,7 +149,6 @@ class UserServices {
                     }
                     return Helper.success(res, resPayload);
                 })
-
 
         } catch {
             let resPayload = {
@@ -157,4 +161,4 @@ class UserServices {
 
 }
 
-export default new UserServices;
+export default new UserServices

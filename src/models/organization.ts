@@ -1,15 +1,12 @@
-
 import mongoose from "mongoose";
 import { Schema } from "mongoose";
-import { addressSchema } from "./address";
-
+import Iorganization from "../interfaces/iorganization";
 import { nanoid } from "nanoid";
-import { boolean } from "joi";
 
 const organizationSchema = new Schema({
-  _id: {
-    type: String,
-    default: () => nanoid()
+  _id:{
+    type:String,
+    default:()=> nanoid()
   },
   orgName: {
     type: String,
@@ -54,5 +51,5 @@ const organizationSchema = new Schema({
   }
 })
 
-let organization = mongoose.model("organization", organizationSchema);
+let organization = mongoose.model<Iorganization>("organization", organizationSchema);
 export default organization

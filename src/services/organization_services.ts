@@ -3,8 +3,11 @@ import Helper from "../utils/helpers/index";
 import organization from "../models/organization";
 import joi from "joi";
 import MESSAGES from "../utils/helpers/message_helper";
+import IorgAdd from "../interfaces/req_interface/iorganization/iorg_add"
+import IorgUpdate from "../interfaces/req_interface/iorganization/Iorg_update";
+import Iorganization from "../interfaces/iorganization";
 class OrganizationServices {
-  async addOrganization(req, res) {
+  async addOrganization(req:IorgAdd, res) {
     try {
       const idUser = req.user._id;
       let attribute = {
@@ -45,7 +48,6 @@ class OrganizationServices {
       return Helper.error(res, resPayload, 500);
     }
   }
-
   async getAlluserWithorganization(req, res) {
     const allusers = await user.aggregate([
       {
@@ -73,7 +75,7 @@ class OrganizationServices {
     };
     Helper.success(res, resPayload);
   }
-  async updateOrg(req, res) {
+  async updateOrg(req:IorgUpdate, res) {
     try {
       const idUser = req.user._id;
       const findusersOrg = await organization.findById({ _id: req.params.id });

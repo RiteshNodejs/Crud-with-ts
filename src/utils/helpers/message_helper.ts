@@ -20,7 +20,9 @@
     ORG_SUCCESS:"Successfully added",
     GET_ALL_ORG:"All users and organization",
     PWD_CHANGE_ERROR:"cant change password",
-    USER_NAME_ERROR:"User name already exist "
+    USER_NAME_ERROR:"User name already exist ",
+    SENT_SUCCESSFULLY:"Message sent successfully",
+    NOT_SENT:"Error while sending "
     
 }
 export default MESSAGES

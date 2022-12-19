@@ -10,9 +10,16 @@ import Ireq from '../interfaces/req_interface/iuser/Iregister';
 import Ilogin from '../interfaces/req_interface/iuser/ilogin';
 import Iprofile from '../interfaces/req_interface/iuser/iprofile';
 import Iupdateuser from '../interfaces/req_interface/iuser/iupdateuser';
+import nodemailer from 'nodemailer';
+import sgMail from '@sendgrid/mail';
+import smtpTransport from 'nodemailer-smtp-transport'
+// import jsonValidate from "src/utils/middleware/json_schema";
+import jsonschema, { validate } from 'jsonschema'
+import { constants } from "fs";
 class UserServices {
     async addUser(req:Ireq, res) {
         try {
+             
             //check userName is existed 
             const extUser = await user.findOne({ userName: req.body.userName });
             if (extUser) {
@@ -158,7 +165,38 @@ class UserServices {
             return Helper.error(res, resPayload, 500);
         }
     }
+   async sendMail(req,res){
+        const transporter = await nodemailer.createTransport(smtpTransport({
+            service:'Gmail',    
 
+            
+            auth: {
+              user: "riteshpathaniawins@gmail.com",
+              pass: "cpgxpaenaraobuov",
+            },
+          }));
+          const mailOption = {
+            to:"gauravrainawins@gmail.com",
+            from: "riteshpathaniawins@gmail.com",
+            subject: "node mailer",
+            text: "testing node mailer"
+          };
+         await transporter.sendMail(mailOption, function (error, info) {
+            if (error) {
+              let resPayload = {
+                message: MESSAGES.NOT_SENT,
+                payload:{error}
+              };
+              return Helper.error(res, resPayload, 424);
+            } else {
+              let resPayload = {
+                message: MESSAGES.SENT_SUCCESSFULLY,
+                payload:info.response
+              };
+              return Helper.success(res, resPayload);
+            }
+          });
+    }
 }
 
 export default new UserServices

@@ -5,8 +5,7 @@ import Route from './routes/route'
 app.use(bodyparser.urlencoded({extended:true}));
 app.use(bodyparser.json());
 import dotenv from 'dotenv'
-require('dotenv').config()
-console.log(process.env) 
+dotenv.config();
 import mongoose from 'mongoose';
 
 import { Application } from "express-serve-static-core";
